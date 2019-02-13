@@ -14,9 +14,13 @@ public class Adv {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="np_advcategory_id")
     private AdvCategory category;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="np_company_id")
+    private Company company;
 
     @Column(name="title")
     private String title;
@@ -65,5 +69,13 @@ public class Adv {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }
