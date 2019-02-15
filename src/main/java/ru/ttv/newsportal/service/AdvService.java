@@ -5,6 +5,7 @@ import ru.ttv.newsportal.model.AdvCategory;
 import ru.ttv.newsportal.model.Company;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Timofey Teplykh
@@ -12,7 +13,7 @@ import java.util.List;
 public interface AdvService {
 
     List<Adv> getAll();
-    Adv get(Long id);
+    Optional<Adv> get(Long id);
     void save(Adv adv);
     void delete(Adv adv);
     void update(Adv adv);

@@ -24,7 +24,7 @@ import java.util.Properties;
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 @ComponentScan("ru.ttv.newsportal.service")
-public class ApplicationConfig {
+public class DataSourceConfiguration {
 
     @Bean
     public DataSource dataSource(
