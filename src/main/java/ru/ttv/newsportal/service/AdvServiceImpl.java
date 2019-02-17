@@ -10,6 +10,7 @@ import ru.ttv.newsportal.repository.AdvRepository;
 import ru.ttv.newsportal.repository.CompanyRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Timofey Teplykh
@@ -31,8 +32,8 @@ public class AdvServiceImpl implements AdvService {
 
     @Override
     @Transactional(readOnly = true)
-    public Adv get(Long id) {
-        return advRepository.getAdvById(id);
+    public Optional<Adv> get(Long id) {
+        return advRepository.findById(id);
     }
 
     @Override
