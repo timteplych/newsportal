@@ -1,6 +1,9 @@
 package ru.ttv.newsportal.service;
 
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ttv.newsportal.model.Adv;
@@ -25,9 +28,14 @@ public class AdvServiceImpl implements AdvService {
     private CompanyRepository companyRepository;
 
     @Override
-    @Transactional(readOnly = true)
+    public Page<Adv> getAll(Pageable pageable) {
+        Page<Adv> advs = advRepository.findAll(pageable);
+        return advs;
+    }
+
+    @Override
     public List<Adv> getAll() {
-        return advRepository.findAll();
+        return Lists.newArrayList(advRepository.findAll());
     }
 
     @Override
@@ -55,13 +63,20 @@ public class AdvServiceImpl implements AdvService {
 
     @Override
     @Transactional
-    public List<Adv> getByCategory(AdvCategory advCategory) {
-        return advRepository.getAdvByCategory(advCategory);
+    public Company getCompanyByAdv(Adv adv) {
+        return companyRepository.getCompanyById(adv.getCompany().getId());
     }
 
     @Override
-    @Transactional
-    public Company getCompanyByAdv(Adv adv) {
-        return companyRepository.getCompanyById(adv.getCompany().getId());
+    @Transactional(readOnly = true)
+    public Page<Adv> getByCategoryId(Long id, Pageable pageable) {
+        Page<Adv> advs = advRepository.findByCategoryId(id, pageable);
+        return advs;
+    }
+
+    @Override
+    public List<Adv> getByCategoryId(Long id) {
+        List<Adv> advList = advRepository.findByCategoryId(id);
+        return advList;
     }
 }
