@@ -1,12 +1,19 @@
 package ru.ttv.newsportal.controller;
 
+import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import ru.ttv.newsportal.controller.ajax.AdvsAjax;
 import ru.ttv.newsportal.model.Adv;
+import ru.ttv.newsportal.model.AdvCategory;
+import ru.ttv.newsportal.model.Company;
+import ru.ttv.newsportal.service.AdvCategoryService;
 import ru.ttv.newsportal.service.AdvService;
 
 import java.util.List;
@@ -21,38 +28,71 @@ public class AdvController {
     @Autowired
     AdvService advService;
 
-//    @GetMapping(value = "/adv/{name}")
-//    public ModelAndView helloGet(@PathVariable("name") String name){
-//        return new ModelAndView("hello","name",name);
-//    }
+    @Autowired
+    AdvCategoryService advCategoryService;
 
-    @PostMapping(value = "/adv/save")
-    public String saveAdvPost(@ModelAttribute("adv") final Adv adv, final BindingResult result){
-        if(!result.hasErrors()) advService.update(adv);
-        return "redirect:/adv/all";
+    @GetMapping(value = "/advs_ajax", produces = "application/json")
+    @ResponseBody
+    /**
+     * Все параметры передаются в адресе асинхронного запроса!
+     * @param pageCounter – текущая страница(блок из number статей)
+     * @param number – количество статей в одном блоке
+     * @param order – порядок сортировки(ASC-прямая, DESC-обратная)
+     * @param orderBy – поле по которому происходит сортировка
+     * @return – объект класса ArticlesAjax, который содержит список статей,
+     * данный объект преобразовывается в JSON-формат
+     */
+    public AdvsAjax advsAjax(@RequestParam("pageCounter") Integer pageCounter,
+                             @RequestParam("number") Integer number,
+                             @RequestParam("order") String order,
+                             @RequestParam("orderBy") String orderBy){
+        Sort sort = null;
+        if(order.equalsIgnoreCase("DESC")){
+            sort = new Sort(Sort.Direction.DESC, orderBy);
+        }else {
+            sort = new Sort(Sort.Direction.ASC, orderBy);
+        }
+
+        PageRequest pageable = new PageRequest(pageCounter, number, sort);
+        Page<Adv> advPage = advService.getAll(pageable);
+        AdvsAjax responsive = new AdvsAjax();
+        responsive.setAdvList(Lists.newArrayList(advPage.iterator()));
+        return responsive;
     }
 
-    @GetMapping(value = "/adv/all")
-    public String advAllGet(final Model model){
-        List<Adv> advList = advService.getAll();
-        model.addAttribute("advList",advList);
-        return "adv-list";
+    @GetMapping(value = "/adv/{id}")
+    public String advView(final Model model, @PathVariable("id") final String id){
+        final Optional<Adv> adv = advService.get(Long.parseLong(id));
+        model.addAttribute("adv", adv.get());
+        return "advview";
+    }
+
+    @PostMapping(value = "/adv/save")
+    public String saveAdvPost(@ModelAttribute("adv") final Adv adv, final BindingResult result, @RequestParam("categoryId") Long categoryId){
+        AdvCategory advCategory = advCategoryService.get(categoryId);
+        if(result.hasErrors() || advCategory==null){
+            return "redirect:/adv/add";
+        }
+        adv.setCategory(advCategory);
+        advService.update(adv);
+        return "redirect:/";
     }
 
     @GetMapping(value = "/adv/add")
-    public String advAdd(){
+    public String advAddForm(Model model){
         final Adv adv = new Adv();
-        adv.setTitle("New Adv");
-        advService.save(adv);
-        return "redirect:/adv/all";
+        adv.setCompany(new Company());
+        List<AdvCategory> advCategories = advCategoryService.getAll();
+        model.addAttribute("adv",adv).addAttribute("categories",advCategories);
+        return "advadd";
     }
 
-    @GetMapping(value = "/adv/edit/{id}")
-    public String advEdit(final Model model, @PathVariable("id") final String id){
-        final Optional<Adv> adv = advService.get(Long.parseLong(id));
-        adv.ifPresent(a -> model.addAttribute("adv",a));
-        return "adv-edit";
-    }
+//    @GetMapping(value = "/adv/edit/{id}")
+//    public String advEdit(final Model model, @PathVariable("id") final String id){
+//        final Optional<Adv> adv = advService.get(Long.parseLong(id));
+//        adv.ifPresent(a -> model.addAttribute("adv",a));
+//        return "adv-edit";
+//    }
 
     @GetMapping(value = "/adv/delete/{id}")
     public String advDelete(final Model model, @PathVariable("id") final String id){

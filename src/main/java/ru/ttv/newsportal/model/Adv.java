@@ -1,6 +1,9 @@
 package ru.ttv.newsportal.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author Timofey Teplykh
@@ -18,7 +21,7 @@ public class Adv {
     @JoinColumn(name="np_advcategory_id")
     private AdvCategory category;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade=CascadeType.PERSIST)
     @JoinColumn(name="np_company_id")
     private Company company;
 
@@ -30,6 +33,11 @@ public class Adv {
 
     @Column(name="phone")
     private String phone;
+
+    @Column(name="published_date", insertable=false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+    private Date publishedDate;
 
     public Long getId() {
         return id;
@@ -77,5 +85,13 @@ public class Adv {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Date getPublishedDate() {
+        return publishedDate;
+    }
+
+    public void setPublishedDate(Date publishedDate) {
+        this.publishedDate = publishedDate;
     }
 }
