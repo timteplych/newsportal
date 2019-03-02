@@ -1,0 +1,11 @@
+<?xml version = "1.0" encoding = "UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <definition extends = "default" name = "adv/advadd">
+        <put-attribute name = "content" value="/WEB-INF/views/adv/advadd.jsp" />
+    </definition>
+    <definition extends = "default" name = "adv/advview">
+        <put-attribute name = "content" value="/WEB-INF/views/adv/advview.jsp" />
+    </definition>
+</tiles-definitions>

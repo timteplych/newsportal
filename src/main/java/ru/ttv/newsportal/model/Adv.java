@@ -3,6 +3,7 @@ package ru.ttv.newsportal.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 /**
@@ -25,9 +26,11 @@ public class Adv {
     @JoinColumn(name="np_company_id")
     private Company company;
 
+    @Size(min=2, max=150, message = "{validation.title.size}")
     @Column(name="title")
     private String title;
 
+    @Size(min = 100, message = "{validation.content.min}")
     @Column(name="content")
     private String content;
 
