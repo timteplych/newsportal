@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.ttv.newsportal.model.Adv;
-import ru.ttv.newsportal.model.AdvCategory;
 import ru.ttv.newsportal.model.Company;
 import ru.ttv.newsportal.repository.AdvRepository;
 import ru.ttv.newsportal.repository.CompanyRepository;

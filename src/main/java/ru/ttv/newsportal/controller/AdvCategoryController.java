@@ -32,6 +32,6 @@ public class AdvCategoryController {
         model.addAttribute("advCategories", advCategories);
         List<Adv> advListByCategory = advService.getByCategoryId(id);
         model.addAttribute("advs",advListByCategory);
-        return "advcategoryview";
+        return "category/advcategoryview";
     }
 }

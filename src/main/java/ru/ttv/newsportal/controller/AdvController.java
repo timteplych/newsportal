@@ -2,6 +2,7 @@ package ru.ttv.newsportal.controller;
 
 import com.google.common.collect.Lists;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.ttv.newsportal.controller.ajax.AdvsAjax;
 import ru.ttv.newsportal.model.Adv;
 import ru.ttv.newsportal.model.AdvCategory;
@@ -16,7 +18,9 @@ import ru.ttv.newsportal.model.Company;
 import ru.ttv.newsportal.service.AdvCategoryService;
 import ru.ttv.newsportal.service.AdvService;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -24,6 +28,9 @@ import java.util.Optional;
  */
 @Controller
 public class AdvController {
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     AdvService advService;
@@ -64,17 +71,18 @@ public class AdvController {
     public String advView(final Model model, @PathVariable("id") final String id){
         final Optional<Adv> adv = advService.get(Long.parseLong(id));
         model.addAttribute("adv", adv.get());
-        return "advview";
+        return "adv/advview";
     }
 
     @PostMapping(value = "/adv/save")
-    public String saveAdvPost(@ModelAttribute("adv") final Adv adv, final BindingResult result, @RequestParam("categoryId") Long categoryId){
+    public String saveAdvPost(@ModelAttribute("adv") @Valid  final Adv adv, final BindingResult result, @RequestParam("categoryId") Long categoryId, Locale locale, RedirectAttributes redirectAttributes){
         AdvCategory advCategory = advCategoryService.get(categoryId);
         if(result.hasErrors() || advCategory==null){
             return "redirect:/adv/add";
         }
         adv.setCategory(advCategory);
         advService.update(adv);
+        redirectAttributes.addFlashAttribute("message",messageSource.getMessage("article_create_fail", new Object[]{},locale));
         return "redirect:/";
     }
 
@@ -84,7 +92,7 @@ public class AdvController {
         adv.setCompany(new Company());
         List<AdvCategory> advCategories = advCategoryService.getAll();
         model.addAttribute("adv",adv).addAttribute("categories",advCategories);
-        return "advadd";
+        return "adv/advadd";
     }
 
 //    @GetMapping(value = "/adv/edit/{id}")
