@@ -17,6 +17,9 @@ function renderingAdvs(advs){
         }else{
             articleBodyCurr = articleBodyCurr.replace("{adv__company}",adv["company"].title);
         }
+
+        articleBodyCurr = articleBodyCurr.replace("{edit__link}",contextPath+"/adv/"+adv["id"]+"/edit");
+        articleBodyCurr = articleBodyCurr.replace("{delete__link}",contextPath+"/adv/"+adv["id"]+"/delete");
         $(articleBodyCurr).appendTo("#templatemo_content")
     });
 }

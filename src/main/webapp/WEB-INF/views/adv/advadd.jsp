@@ -35,15 +35,15 @@
         <p style="padding-top:50px;">
                 <form:textarea path="content" id="content"  class="contentarea"></form:textarea>
                 <form:errors path="content" cssClass="error" />
-        <div class="author_add">
-            <span class="author_info_title">${labelAuthorInfo}*</span>
-            <form:input path="company.title"  type="text" placeholder="${labelAuthorName}" class="add_author_firstname" />
-            <form:errors path="company.title" cssClass="error" />
-            <form:input path="company.address" type="text" placeholder="${labelCompanyAddress}" name="add_author_lastname" />
-            <form:errors path="company.address" cssClass="error" />
-            <form:input path="company.description" type="text" placeholder="${labelCompanyDescription}" name="add_author_lastname" />
-            <form:errors path="company.description" cssClass="error" />
-        </div>
+        <%--<div class="author_add">--%>
+            <%--<span class="author_info_title">${labelAuthorInfo}*</span>--%>
+            <%--<form:input path="company.title"  type="text" placeholder="${labelAuthorName}" class="add_author_firstname" />--%>
+            <%--<form:errors path="company.title" cssClass="error" />--%>
+            <%--<form:input path="company.address" type="text" placeholder="${labelCompanyAddress}" name="add_author_lastname" />--%>
+            <%--<form:errors path="company.address" cssClass="error" />--%>
+            <%--<form:input path="company.description" type="text" placeholder="${labelCompanyDescription}" name="add_author_lastname" />--%>
+            <%--<form:errors path="company.description" cssClass="error" />--%>
+        <%--</div>--%>
 
         <input type="submit"  class="button_sub" value="${labelButtonPublish}" />
     </form:form>
