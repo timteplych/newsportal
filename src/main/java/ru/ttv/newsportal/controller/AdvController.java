@@ -6,6 +6,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,7 +18,9 @@ import ru.ttv.newsportal.model.AdvCategory;
 import ru.ttv.newsportal.model.Company;
 import ru.ttv.newsportal.service.AdvCategoryService;
 import ru.ttv.newsportal.service.AdvService;
+import ru.ttv.newsportal.service.CompanyService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Locale;
@@ -37,6 +40,9 @@ public class AdvController {
 
     @Autowired
     AdvCategoryService advCategoryService;
+
+    @Autowired
+    CompanyService companyService;
 
     @GetMapping(value = "/advs_ajax", produces = "application/json")
     @ResponseBody
@@ -95,16 +101,39 @@ public class AdvController {
         return "adv/advadd";
     }
 
-//    @GetMapping(value = "/adv/edit/{id}")
-//    public String advEdit(final Model model, @PathVariable("id") final String id){
-//        final Optional<Adv> adv = advService.get(Long.parseLong(id));
-//        adv.ifPresent(a -> model.addAttribute("adv",a));
-//        return "adv-edit";
-//    }
+    @RequestMapping(value="/adv/add",method=RequestMethod.POST)
+    public String add(Model model, @ModelAttribute("article") @Valid  Adv adv, BindingResult bindingResult,
+                      @RequestParam("categoryId") Long categoryId, Locale locale, RedirectAttributes redirectAttributes){
+        if(bindingResult.hasErrors() || categoryId.equals(0)){
+            System.out.println("category is null");
+            model.addAttribute("article", adv)
+                    .addAttribute("categories", advCategoryService.getAll())
+                    .addAttribute("message",messageSource.getMessage("article_create_fail", new Object[]{}, locale) );
+            return "adv/advadd";
+        }
+        String currentLogin = SecurityContextHolder.getContext().getAuthentication().getName();
+        Company company = companyService.getByLogin(currentLogin);
+        AdvCategory category = advCategoryService. get(categoryId);
+        adv.setCategory(category);
+        adv.setCompany(company);
+        advService.save(adv);
+        redirectAttributes.addFlashAttribute("message", messageSource.getMessage("article_create_success", new Object[]{}, locale));
+        return "redirect:/";
+    }
 
-    @GetMapping(value = "/adv/delete/{id}")
+
+    @GetMapping(value = "/adv/{id}/edit")
+    public String advEdit(final Model model, @PathVariable("id") final String id, HttpServletRequest request){
+        model.addAttribute("reff",request.getRequestURI());
+
+        final Optional<Adv> adv = advService.get(Long.parseLong(id));
+        adv.ifPresent(a -> model.addAttribute("adv",a));
+        return "adv/advadd";
+    }
+
+    @GetMapping(value = "/adv/{id}/delete")
     public String advDelete(final Model model, @PathVariable("id") final String id){
         advService.delete(advService.get(Long.parseLong(id)).get());
-        return "redirect:/adv/all";
+        return "redirect:/";
     }
 }

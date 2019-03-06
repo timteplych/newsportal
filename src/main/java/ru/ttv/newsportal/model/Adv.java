@@ -30,7 +30,7 @@ public class Adv {
     @Column(name="title")
     private String title;
 
-    @Size(min = 100, message = "{validation.content.min}")
+    //@Size(min = 100, message = "{validation.content.min}")
     @Column(name="content")
     private String content;
 

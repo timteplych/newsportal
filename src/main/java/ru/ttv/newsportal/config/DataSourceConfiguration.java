@@ -23,7 +23,7 @@ import java.util.Properties;
 @EnableJpaRepositories("ru.ttv.newsportal.repository")
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
-@ComponentScan("ru.ttv.newsportal.service")
+@ComponentScan("ru.ttv.newsportal")
 public class DataSourceConfiguration {
 
     @Bean
